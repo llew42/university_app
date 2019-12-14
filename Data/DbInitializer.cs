@@ -1,4 +1,3 @@
-using BoiseStateUniversity.Data;
 using BoiseStateUniversity.Models;
 using System;
 using System.Linq;
@@ -78,13 +77,27 @@ namespace BoiseStateUniversity.Data
 
          var courses = new Course[]
          {
-            new Course{ID=1050,Title="Chemistry",Credits=3},
-            new Course{ID=4022,Title="Microeconomics",Credits=3},
-            new Course{ID=4041,Title="Macroeconomics",Credits=3},
-            new Course{ID=1045,Title="Calculus",Credits=4},
-            new Course{ID=3141,Title="Trigonometry",Credits=4},
-            new Course{ID=2021,Title="Composition",Credits=3},
-            new Course{ID=2042,Title="Literature",Credits=4}
+            new Course {ID = 1050, Title = "Chemistry",      Credits = 3,
+                    DepartmentID = departments.Single( s => s.Name == "Engineering").ID
+                },
+            new Course {ID = 4022, Title = "Microeconomics", Credits = 3,
+               DepartmentID = departments.Single( s => s.Name == "Economics").ID
+            },
+            new Course {ID = 4041, Title = "Macroeconomics", Credits = 3,
+               DepartmentID = departments.Single( s => s.Name == "Economics").ID
+            },
+            new Course {ID = 1045, Title = "Calculus",       Credits = 4,
+               DepartmentID = departments.Single( s => s.Name == "Mathematics").ID
+            },
+            new Course {ID = 3141, Title = "Trigonometry",   Credits = 4,
+               DepartmentID = departments.Single( s => s.Name == "Mathematics").ID
+            },
+            new Course {ID = 2021, Title = "Composition",    Credits = 3,
+               DepartmentID = departments.Single( s => s.Name == "English").ID
+            },
+            new Course {ID = 2042, Title = "Literature",     Credits = 4,
+               DepartmentID = departments.Single( s => s.Name == "English").ID
+            },
          };
          foreach (Course c in courses)
          {
