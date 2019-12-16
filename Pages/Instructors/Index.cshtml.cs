@@ -29,11 +29,11 @@ namespace BoiseStateUniversity.Pages.Instructors
                 .Include(i => i.CourseAssignments)
                     .ThenInclude(i => i.Course)
                         .ThenInclude(i => i.Department)
-                .Include(i => i.CourseAssignments)
-                    .ThenInclude(i => i.Course)
-                        .ThenInclude(i => i.Enrollments)
-                            .ThenInclude(i => i.Student)
-                .AsNoTracking()
+                // EAGER LOADING METHOD 
+                // .Include(i => i.CourseAssignments)
+                //     .ThenInclude(i => i.Course)
+                //         .ThenInclude(i => i.Enrollments)
+                //             .ThenInclude(i => i.Student)
                 .OrderBy(i => i.LastName)
                 .ToListAsync();
             
@@ -41,7 +41,7 @@ namespace BoiseStateUniversity.Pages.Instructors
             {
                 InstructorID = id.Value;
                 Instructor instructor = InstructorData.Instructors
-                    .Where(i => i.ID == id.Value).Single();
+                    .SingleOrDefault(i => i.ID == id.Value);
                 InstructorData.Courses = instructor.CourseAssignments.Select(s => s.Course);
             }
 
@@ -49,15 +49,16 @@ namespace BoiseStateUniversity.Pages.Instructors
             {
                 CourseID = courseID.Value;
                 var selectedCourse = InstructorData.Courses
-                    .Where(x => x.ID == courseID).Single();
+                    .SingleOrDefault(x => x.ID == courseID);
+                // EXPLICIT LOADING METHOD
+                await _context.Entry(selectedCourse).Collection(x => x.Enrollments).LoadAsync();
+                foreach (Enrollment enrollment in selectedCourse.Enrollments)
+                {
+                    await _context.Entry(enrollment).Reference(x => x.Student).LoadAsync();
+                }
                 InstructorData.Enrollments = selectedCourse.Enrollments;
             }
         }
-        public IList<Instructor> Instructor { get;set; }
-
-        public async Task OnGetAsync()
-        {
-            Instructor = await _context.Instructors.ToListAsync();
-        }
+        public IList<Instructor> Instructor { get; set; }
     }
 }
