@@ -1,16 +1,12 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using BoiseStateUniversity.Data;
 using BoiseStateUniversity.Models;
 
 namespace BoiseStateUniversity.Pages.Instructors
 {
-    public class CreateModel : PageModel
+   public class CreateModel : InstructorCoursesPageModel
     {
         private readonly BoiseStateUniversity.Data.SchoolContext _context;
 
@@ -21,6 +17,9 @@ namespace BoiseStateUniversity.Pages.Instructors
 
         public IActionResult OnGet()
         {
+            Instructor instructor = new Instructor();
+            instructor.CourseAssignments = new List<CourseAssignment>();
+            PopulateAssignedCourseData(_context, instructor);
             return Page();
         }
 
@@ -29,17 +28,36 @@ namespace BoiseStateUniversity.Pages.Instructors
 
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(string[] selectedCourses)
         {
-            if (!ModelState.IsValid)
+            Instructor newInstructor = new Instructor();
+            
+            if (selectedCourses != null)
             {
-                return Page();
+                newInstructor.CourseAssignments = new List<CourseAssignment>();
+                foreach (var course in selectedCourses)
+                {
+                    var courseToAdd = new CourseAssignment
+                    {
+                        CourseID = int.Parse(course)
+                    };
+                    newInstructor.CourseAssignments.Add(courseToAdd);
+                }
             }
 
-            _context.Instructors.Add(Instructor);
-            await _context.SaveChangesAsync();
+            if (await TryUpdateModelAsync<Instructor>(
+                newInstructor,
+                "Instructor",
+                i => i.FirstMidName, i => i.LastName, i => i.HireDate, i => i.OfficeAssignment
+            ))
+            {
+                _context.Instructors.Add(newInstructor);
+                await _context.SaveChangesAsync();
+                return RedirectToPage("./Index");
+            }
 
-            return RedirectToPage("./Index");
+            PopulateAssignedCourseData(_context, newInstructor);
+            return Page();
         }
     }
 }

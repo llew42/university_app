@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using BoiseStateUniversity.Models;
 using BoiseStateUniversity.Models.SchoolViewModels;
 using System.Linq;
+using System;
 
 namespace BoiseStateUniversity.Pages.Instructors
 {
@@ -37,6 +38,8 @@ namespace BoiseStateUniversity.Pages.Instructors
                 .OrderBy(i => i.LastName)
                 .ToListAsync();
             
+            Console.WriteLine("InstructorType ," );
+            Console.WriteLine(typeof(Instructor));
             if (id != null)
             {
                 InstructorID = id.Value;

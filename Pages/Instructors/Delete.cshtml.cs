@@ -1,16 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using BoiseStateUniversity.Data;
 using BoiseStateUniversity.Models;
+using System.Collections.Generic;
 
 namespace BoiseStateUniversity.Pages.Instructors
 {
-    public class DeleteModel : PageModel
+   public class DeleteModel : PageModel
     {
         private readonly BoiseStateUniversity.Data.SchoolContext _context;
 
@@ -45,14 +43,23 @@ namespace BoiseStateUniversity.Pages.Instructors
                 return NotFound();
             }
 
-            Instructor = await _context.Instructors.FindAsync(id);
-
-            if (Instructor != null)
+            Instructor instructor = await _context.Instructors
+                .Include(i => i.CourseAssignments)
+                .SingleAsync(i => i.ID == id);
+            
+            if (instructor == null)
             {
-                _context.Instructors.Remove(Instructor);
-                await _context.SaveChangesAsync();
+                return RedirectToPage("./Index");
             }
 
+            List<Department> departments = await _context.Departments
+                .Where(d => d.InstructorID == id)
+                .ToListAsync();
+            departments.ForEach(d => d.InstructorID = null);
+
+            _context.Instructors.Remove(instructor);
+
+            await _context.SaveChangesAsync();
             return RedirectToPage("./Index");
         }
     }

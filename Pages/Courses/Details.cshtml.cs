@@ -1,16 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using BoiseStateUniversity.Data;
 using BoiseStateUniversity.Models;
 
 namespace BoiseStateUniversity.Pages.Courses
 {
-    public class DetailsModel : PageModel
+   public class DetailsModel : PageModel
     {
         private readonly BoiseStateUniversity.Data.SchoolContext _context;
 
@@ -29,7 +25,9 @@ namespace BoiseStateUniversity.Pages.Courses
             }
 
             Course = await _context.Courses
-                .Include(c => c.Department).FirstOrDefaultAsync(m => m.ID == id);
+                .AsNoTracking()
+                .Include(c => c.Department)
+                .FirstOrDefaultAsync(m => m.ID == id);
 
             if (Course == null)
             {
