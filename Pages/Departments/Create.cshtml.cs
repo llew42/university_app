@@ -1,16 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using BoiseStateUniversity.Data;
 using BoiseStateUniversity.Models;
 
 namespace BoiseStateUniversity.Pages.Departments
 {
-    public class CreateModel : PageModel
+   public class CreateModel : PageModel
     {
         private readonly BoiseStateUniversity.Data.SchoolContext _context;
 

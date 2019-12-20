@@ -6,6 +6,7 @@ using BoiseStateUniversity.Models;
 using BoiseStateUniversity.Models.SchoolViewModels;
 using System.Linq;
 using System;
+using System.Data.Common;
 
 namespace BoiseStateUniversity.Pages.Instructors
 {
@@ -37,9 +38,7 @@ namespace BoiseStateUniversity.Pages.Instructors
                 //             .ThenInclude(i => i.Student)
                 .OrderBy(i => i.LastName)
                 .ToListAsync();
-            
-            Console.WriteLine("InstructorType ," );
-            Console.WriteLine(typeof(Instructor));
+
             if (id != null)
             {
                 InstructorID = id.Value;
@@ -51,7 +50,7 @@ namespace BoiseStateUniversity.Pages.Instructors
             if (courseID != null)
             {
                 CourseID = courseID.Value;
-                var selectedCourse = InstructorData.Courses
+                Course selectedCourse = InstructorData.Courses
                     .SingleOrDefault(x => x.ID == courseID);
                 // EXPLICIT LOADING METHOD
                 await _context.Entry(selectedCourse).Collection(x => x.Enrollments).LoadAsync();
